@@ -1,20 +1,26 @@
 import os
 import re
-from blacklist import list
+from blacklist import blacklist
+        
 
-def load_data(filepath):
-    if not os.path.exists(filepath):
-        return None
-    file = open(filepath, "r")
-    text = file.read()
-    file.close()
-    return text
-    
-def blacklist_inspection(password):
-    for string in list:
-        if password.find(string) != -1:
+def check_password_conformity(password):
+    for string in blacklist:
+        if (string in password):
             print('Ваш пароль содержит слово из списка недопустимых паролей.')
             return 0
+    if password.isdigit():
+        print("Invalid password(only numerical digits)")
+        return 0
+    if re.search('\s', password):
+        print('Invalid password(whitespace characters)')
+        return 0
+    else: 
+        return 1
+
+
+    
+def blacklist_inspection(password):
+    
     return 1
 
 def case_sensitivity(password):
@@ -24,26 +30,16 @@ def case_sensitivity(password):
         return 1
         
 def numerical_digits(password):
-    if password.isdigit():
-        print("Invalid password(only numerical digits)")
-        return 1
-    else:
-        for char in password:
-            if char.isdigit():
-                return 2
-        return 0
+    for char in password:
+        if char.isdigit():
+            return 1
+    return 0
         
 def special_characters(password):
     if re.search('\W', password):
-        return 2
-    return 1
-    
-def whitespace_characters(password):
-    if re.search('\s', password):
-        print('Invalid password(whitespace characters)')
-        return 0
-    else: 
         return 1
+    return 1
+      
     
 def password_length(password):
     if len(password)<8:
@@ -57,8 +53,8 @@ def password_length(password):
 
 
 def get_password_strength(password):
-    strength = 0
-    strength += blacklist_inspection(password)
+    minimal_password_strength = 3       # минимальная оценка после проверки в функции check_password_conformity
+    strength = minimal_password_strength
     strength += case_sensitivity(password)
     strength += numerical_digits(password)
     strength += special_characters(password)
@@ -68,6 +64,6 @@ def get_password_strength(password):
 
 if __name__ == '__main__':
     password = input('Введите пароль: ')
-    if whitespace_characters(password):
-        str = get_password_strength(password)
-        print('Ваш пароль набрал %d баллов из 10' % (str))
+    if check_password_conformity(password):
+        strength = get_password_strength(password)
+        print('Ваш пароль набрал %d баллов из 10' % (strength))
