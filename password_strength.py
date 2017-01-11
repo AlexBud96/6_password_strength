@@ -1,7 +1,13 @@
 import os
 import re
+import getpass
 from blacklist import blacklist
         
+
+def get_user_password():
+    password = getpass.getpass('Введите пароль: ')
+    return password
+
 
 def check_password_conformity(password):
     for string in blacklist:
@@ -63,7 +69,7 @@ def get_password_strength(password):
 
 
 if __name__ == '__main__':
-    password = input('Введите пароль: ')
+    password = get_user_password()
     if check_password_conformity(password):
         strength = get_password_strength(password)
         print('Ваш пароль набрал %d баллов из 10' % (strength))
